@@ -8,15 +8,15 @@ MarpaX::Simple::Rules - Simplest way to create Marpa::XS rules.
     use MarpaX::Simple::Rules 'parse_rules';
     
     my $rules = parse_rules(<<"RULES");
-    Expression  ::= Term                => Return_0
-    Term        ::= Factor              => Return_0
-    Term        ::= Term Plus Term      => Plus
-    Factor      ::= Number              => Return_0
-    Factor      ::= Factor Mul Factor   => Mul
+    expression  ::= term                => return_0
+    term        ::= factor              => return_0
+    term        ::= term plus term      => plus
+    factor      ::= number              => return_0
+    factor      ::= factor mul factor   => mul
     RULES
     
     my $grammar = Marpa::XS::Grammar->new({
-        start => 'Expression',
+        start => 'expression',
         rules => $rules,
         ...
     });
