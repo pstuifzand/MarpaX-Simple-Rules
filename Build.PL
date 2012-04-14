@@ -7,5 +7,6 @@ my $build = Module::Build->new
     requires => {
         'Marpa::XS' => '1.0',
     },
+    configure_requires => { 'Module::Build' => 0.38 }
 );
 $build->create_build_script;
