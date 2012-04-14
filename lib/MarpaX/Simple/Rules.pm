@@ -6,20 +6,14 @@ use parent 'Exporter';
 
 our @EXPORT_OK = qw/parse_rules/;
 
-sub Rules {shift; return \@_; } 
-sub Rule {shift;return { @{$_[0]}, @{$_[2]} }; }
-sub RuleWithAction {shift;return { @{$_[0]}, @{$_[2]}, action => $_[4] }; }
-sub Lhs {shift;return [lhs => $_[0]];}
-sub Rhs {shift;return [rhs => $_[0]];}
-sub Star {
-    shift;
-    return [rhs => $_[0], min => 0];
-}
-sub Plus {
-    shift;
-    return [rhs => $_[0], min => 1];
-}
-sub Names {shift;return [@_];}
+sub Rules { shift; return \@_; } 
+sub Rule { shift; return { @{$_[0]}, @{$_[2]} }; }
+sub RuleWithAction { shift; return { @{$_[0]}, @{$_[2]}, action => $_[4] }; }
+sub Lhs { shift; return [lhs => $_[0]];}
+sub Rhs { shift; return [rhs => $_[0]];}
+sub Star { shift; return [rhs => [ $_[0] ], min => 0]; }
+sub Plus { shift; return [rhs => [ $_[0] ], min => 1]; }
+sub Names { shift; return [@_];}
 sub Null { shift; return [rhs => []]; }
 
 sub parse_rules {
