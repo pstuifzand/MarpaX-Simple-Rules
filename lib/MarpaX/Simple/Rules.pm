@@ -26,15 +26,15 @@ sub parse_rules {
         actions => __PACKAGE__,
         
         rules => [
-            { lhs => 'Rules',     rhs => [qw/Rule/], min => 1 },
-            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs/], action => 'Rule' },
-            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs Arrow Name/], action => 'RuleWithAction' },
+            { lhs => 'Rules',     rhs => [qw/Rule/],                min => 1 },
+            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs/],         action => 'Rule' },
+            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => Name/], action => 'RuleWithAction' },
             { lhs => 'Lhs',       rhs => [qw/Name/] },
             { lhs => 'Rhs',       rhs => [qw/Names/] },
-            { lhs => 'Rhs',       rhs => [qw/Name Plus/], action => 'Plus' },
-            { lhs => 'Rhs',       rhs => [qw/Name Star/], action => 'Star' },
-            { lhs => 'Rhs',       rhs => [qw/Null/],      action => 'Null' },
-            { lhs => 'Names',     rhs => [qw/Name/], min => 1 },
+            { lhs => 'Rhs',       rhs => [qw/Name +/],              action => 'Plus' },
+            { lhs => 'Rhs',       rhs => [qw/Name */],              action => 'Star' },
+            { lhs => 'Rhs',       rhs => [qw/Null/],                action => 'Null' },
+            { lhs => 'Names',     rhs => [qw/Name/],                min => 1 },
         ],
 
         lhs_terminals => 0,
@@ -43,27 +43,31 @@ sub parse_rules {
 
     my $rec = Marpa::XS::Recognizer->new({grammar => $grammar});
 
-    while ($string) {
-        $string =~ s/^\s+//;
-        print $string;
+    my @tokens = split /\s+/, $string;
+    for (@tokens) {
+        next if m/^\s*$/;
 
-        if ($string =~ s/^::=//) {
-            $rec->read('DeclareOp');
+        if (m/^::=$/) {
+            $rec->read('::=');
         }
-        elsif ($string =~ s/^Null//) {
+        elsif (m/^Null$/) {
             $rec->read('Null');
         }
-        elsif ($string =~ s/^=>//) {
-            $rec->read('Arrow');
+        elsif (m/^=>$/) {
+            $rec->read('=>');
         }
-        elsif ($string =~ s/^\+//) {
-            $rec->read('Plus');
+        elsif (m/^[+]$/) {
+            $rec->read('+');
         }
-        elsif ($string =~ s/^\*//) {
-            $rec->read('Star');
+        elsif (m/^[*]$/) {
+            $rec->read('*');
         }
-        elsif ($string =~ s/^(\w+)//) {
+        elsif (m/^(\w+)$/) {
             $rec->read('Name', $1);
+        }
+        elsif (m/^(\w+)([+*]?)$/) {
+            $rec->read('Name', $1);
+            $rec->read($2, $2);
         }
     }
 
@@ -95,6 +99,14 @@ MarpaX::Simple::Rules - Simple definition language for rules
         start => 'Parser',
         rules => $rules,
     });
+
+=head1 DESCRIPTION
+
+MarpaX::Simple::Rules is a specification language that allows us to write the
+parameter for the rules argument of Marpa::XS grammar as a string.
+
+The goal is to provide a language that will let you create all possible ways
+that rules can be written in a short and simple way.
 
 =cut
 
