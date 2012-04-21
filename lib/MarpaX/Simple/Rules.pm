@@ -108,5 +108,26 @@ parameter for the rules argument of Marpa::XS grammar as a string.
 The goal is to provide a language that will let you create all possible ways
 that rules can be written in a short and simple way.
 
+=head1 SEE ALSO
+
+L<Marpa::XS>
+
+=head1 HOMEPAGE
+
+L<http://github.com/pstuifzand/MarpaX-Simple-Rules>
+
+=head1 LICENSE 
+
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=head1 AUTHOR
+
+Peter Stuifzand E<lt>peter@stuifzand.euE<gt>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2012 Peter Stuifzand.  All rights reserved.
+
 =cut
 
