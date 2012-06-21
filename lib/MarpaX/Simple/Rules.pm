@@ -90,27 +90,81 @@ MarpaX::Simple::Rules - Simple definition language for rules
     use Marpa::XS;
     use MarpaX::Simple::Rules 'parse_rules';
 
+    sub numbers {
+        my (undef, @numbers) = @_;
+        return \@numbers;
+    }
+
     my $rules = parse_rules(<<"RULES");
-    Parser     ::= Expression      => Action_1
-    Expression ::= Expression      => Action_2
+    parser   ::= number+  => numbers
     RULES
 
     my $grammar = Marpa::XS::Grammar->new({
-        start => 'Parser',
-        rules => $rules,
+        start   => 'parser',
+        rules   => $rules,
+        actions => __PACKAGE__,
     });
+    $grammar->precompute();
+
+    # Read tokens
+    my $rec = Marpa::XS::Recognizer->new({grammar => $grammar });
+    $rec->read('number', 1);
+    $rec->read('number', 2);
+
+    # Get the return value
+    my $val = ${$rec->value()};
+    print @{$val} . "\n";
 
 =head1 DESCRIPTION
 
 MarpaX::Simple::Rules is a specification language that allows us to write the
 parameter for the rules argument of Marpa::XS grammar as a string.
 
-The goal is to provide a language that will let you create all possible ways
-that rules can be written in a short and simple way.
+=head1 FUNCTION
+
+=head2 parse_rules(GRAMMAR-STRING)
+
+Parses the argument and returns a values that can be used as the C<rules> argument in
+Marpa::XS::Grammar constructor.
+
+=head1 SYNTAX
+
+A rule is a line that consists of two or three parts. These parts are called
+the left-hand side (LHS), the right-hand side (RHS) and the action. Every rule
+should contain a LHS and RHS. The action is optional.
+
+The LHS and RHS are separated by the declare operator C<::=>. A LHS begins with
+a Name. A name is anything that matches the following regex: C<\w+>.
+
+The RHS can be specified in four ways: multiple names, a name with a plus C<+>, a name
+with a star C<*>, or C<Null>.
+
+=head1 TRANSFORMATION
+
+This is a list of the patterns that can be specified. On the left of C<becomes>
+we see the rule as used in the grammar string and on the right we see perl data
+structure that it becomes.
+
+    A ::= B                   becomes      { lhs => 'A', rhs => [ qw/B/ ] }
+    A ::= B C                 becomes      { lhs => 'A', rhs => [ qw/B C/ ] }
+    A ::= B+                  becomes      { lhs => 'A', rhs => [ qw/B/ ], min => 1 }
+    A ::= B*                  becomes      { lhs => 'A', rhs => [ qw/B/ ], min => 0 }
+    A ::= B* => return_all    becomes      { 
+                                              lhs => 'A',  
+                                              rhs => [ qw/B/ ],
+                                              min => 0,
+                                              action => 'return_all',
+                                           }
+
+=head1 TOKENS
+
+MarpaX::Simple::Rules doesn't help you getting from a stream to tokens. See
+L<MarpaX::Simple::Lexer> for that or L<MarpaX::Simple::Rules>, which contains a
+very simple lexer.
 
 =head1 SEE ALSO
 
-L<Marpa::XS>
+L<Marpa::XS>, L<MarpaX::Simple::Lexer>
 
 =head1 HOMEPAGE
 
