@@ -3,7 +3,7 @@ use strict;
 
 our $VERSION='0.2.4';
 
-use Marpa::R2;
+use Marpa::XS;
 use base 'Exporter';
 
 our @EXPORT_OK = qw/parse_rules/;
@@ -23,7 +23,7 @@ sub Null { shift; return [rhs => []]; }
 sub parse_rules {
     my ($string) = @_;
 
-    my $grammar = Marpa::R2::Grammar->new({
+    my $grammar = Marpa::XS::Grammar->new({
         start   => 'Rules',
         actions => __PACKAGE__,
         rules => [
@@ -43,7 +43,7 @@ sub parse_rules {
     });
     $grammar->precompute;
 
-    my $rec = Marpa::R2::Recognizer->new({grammar => $grammar});
+    my $rec = Marpa::XS::Recognizer->new({grammar => $grammar});
 
     my @tokens = split /\s+/, $string;
 
@@ -103,7 +103,7 @@ MarpaX::Simple::Rules - Simple definition language for rules
 
 =head1 SYNOPSYS
 
-    use Marpa::R2;
+    use Marpa::XS;
     use MarpaX::Simple::Rules 'parse_rules';
 
     sub numbers {
@@ -115,7 +115,7 @@ MarpaX::Simple::Rules - Simple definition language for rules
     parser   ::= number+  => numbers
     RULES
 
-    my $grammar = Marpa::R2::Grammar->new({
+    my $grammar = Marpa::XS::Grammar->new({
         start   => 'parser',
         rules   => $rules,
         actions => __PACKAGE__,
@@ -123,7 +123,7 @@ MarpaX::Simple::Rules - Simple definition language for rules
     $grammar->precompute();
 
     # Read tokens
-    my $rec = Marpa::R2::Recognizer->new({grammar => $grammar });
+    my $rec = Marpa::XS::Recognizer->new({grammar => $grammar });
     $rec->read('number', 1);
     $rec->read('number', 2);
 
@@ -134,14 +134,14 @@ MarpaX::Simple::Rules - Simple definition language for rules
 =head1 DESCRIPTION
 
 MarpaX::Simple::Rules is a specification language that allows us to write the
-parameter for the rules argument of Marpa::R2 grammar as a string.
+parameter for the rules argument of Marpa::XS grammar as a string.
 
 =head1 FUNCTION
 
 =head2 parse_rules(GRAMMAR-STRING)
 
 Parses the argument and returns a values that can be used as the C<rules> argument in
-Marpa::R2::Grammar constructor.
+Marpa::XS::Grammar constructor.
 
 =head1 SYNTAX
 
@@ -180,7 +180,7 @@ very simple lexer.
 
 =head1 SEE ALSO
 
-L<Marpa::R2>, L<MarpaX::Simple::Lexer>
+L<Marpa::XS>, L<MarpaX::Simple::Lexer>
 
 =head1 HOMEPAGE
 
