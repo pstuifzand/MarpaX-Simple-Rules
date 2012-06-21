@@ -1,10 +1,10 @@
 package MarpaX::Simple::Rules;
 use strict;
 
-our $VERSION='0.2.2';
+our $VERSION='0.2.4';
 
 use Marpa::XS;
-use parent 'Exporter';
+use base 'Exporter';
 
 our @EXPORT_OK = qw/parse_rules/;
 

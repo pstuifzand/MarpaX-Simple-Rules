@@ -1,7 +1,7 @@
 {
    "abstract" : "Simple definition language for rules",
    "author" : [
-      "unknown"
+      "Peter Stuifzand E<lt>peter@stuifzand.euE<gt>"
    ],
    "dynamic_config" : 1,
    "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.120630",
@@ -28,7 +28,7 @@
    "provides" : {
       "MarpaX::Simple::Rules" : {
          "file" : "lib/MarpaX/Simple/Rules.pm",
-         "version" : "v0.2.0"
+         "version" : "v0.2.4"
       }
    },
    "release_status" : "stable",
@@ -37,5 +37,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "v0.2.0"
+   "version" : "v0.2.4"
 }

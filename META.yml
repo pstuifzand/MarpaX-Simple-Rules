@@ -1,7 +1,7 @@
 ---
 abstract: 'Simple definition language for rules'
 author:
-  - unknown
+  - 'Peter Stuifzand E<lt>peter@stuifzand.euE<gt>'
 build_requires: {}
 configure_requires:
   Module::Build: 0.38
@@ -15,9 +15,9 @@ name: MarpaX-Simple-Rules
 provides:
   MarpaX::Simple::Rules:
     file: lib/MarpaX/Simple/Rules.pm
-    version: v0.2.0
+    version: v0.2.4
 requires:
   Marpa::XS: 1.0
 resources:
   license: http://dev.perl.org/licenses/
-version: v0.2.0
+version: v0.2.4
