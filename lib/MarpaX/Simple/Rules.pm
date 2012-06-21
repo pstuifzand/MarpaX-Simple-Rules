@@ -8,7 +8,9 @@ use base 'Exporter';
 
 our @EXPORT_OK = qw/parse_rules/;
 
-sub Rules { shift; return \@_; } 
+sub MissingRHS {my $m=shift;push @{$m->{error}}, 'Missing "::=" operator'; }
+sub MissingLHS {my $m=shift;push @{$m->{error}}, 'Missing name left of "::=" operator'; }
+sub Rules { my $m = shift; return { m => $m, rules => \@_ }; } 
 sub Rule { shift; return { @{$_[0]}, @{$_[2]} }; }
 sub RuleWithAction { shift; return { @{$_[0]}, @{$_[2]}, action => $_[4] }; }
 sub Lhs { shift; return [lhs => $_[0]];}
@@ -24,9 +26,10 @@ sub parse_rules {
     my $grammar = Marpa::XS::Grammar->new({
         start   => 'Rules',
         actions => __PACKAGE__,
-        
         rules => [
             { lhs => 'Rules',     rhs => [qw/Rule/],                min => 1 },
+            { lhs => 'Rule',      rhs => [qw/Lhs/],                 action => 'MissingRHS' },
+            { lhs => 'Rule',      rhs => [qw/::=/],                 action => 'MissingLHS' },
             { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs/],         action => 'Rule' },
             { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => Name/], action => 'RuleWithAction' },
             { lhs => 'Lhs',       rhs => [qw/Name/] },
@@ -44,6 +47,11 @@ sub parse_rules {
     my $rec = Marpa::XS::Recognizer->new({grammar => $grammar});
 
     my @tokens = split /\s+/, $string;
+
+    if (!@tokens) {
+        return [];
+    }
+
     for (@tokens) {
         next if m/^\s*$/;
 
@@ -75,9 +83,18 @@ sub parse_rules {
     }
 
     $rec->end_input;
-    my $rules = ${$rec->value};
 
-    return $rules;
+    my $parse_ref = $rec->value;
+
+    if (!defined $parse_ref) {
+        die "Can't parse";
+    }
+    my $parse = $$parse_ref;
+
+    if (ref($parse->{m}{error}) eq 'ARRAY' && @{$parse->{m}{error}}) {
+        die join ": ", @{$parse->{m}{error}};
+    }
+    return $parse->{rules};
 }
 
 1;
