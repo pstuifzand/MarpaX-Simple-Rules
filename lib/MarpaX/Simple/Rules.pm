@@ -65,6 +65,9 @@ sub parse_rules {
         elsif (m/^(\w+)$/) {
             $rec->read('Name', $1);
         }
+        elsif (m/^(::\w+)$/) {
+            $rec->read('Name', $1);
+        }
         elsif (m/^(\w+)([+*]?)$/) {
             $rec->read('Name', $1);
             $rec->read($2, $2);
