@@ -27,17 +27,18 @@ sub parse_rules {
         start   => 'Rules',
         actions => __PACKAGE__,
         rules => [
-            { lhs => 'Rules',     rhs => [qw/Rule/],                min => 1 },
-            { lhs => 'Rule',      rhs => [qw/Lhs/],                 action => 'MissingRHS' },
-            { lhs => 'Rule',      rhs => [qw/::=/],                 action => 'MissingLHS' },
-            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs/],         action => 'Rule' },
-            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => Name/], action => 'RuleWithAction' },
-            { lhs => 'Lhs',       rhs => [qw/Name/] },
-            { lhs => 'Rhs',       rhs => [qw/Names/] },
+            { lhs => 'Rules',     rhs => [qw/Rule/],                      action => 'Rules', min => 1 },
+            { lhs => 'Rule',      rhs => [qw/Lhs/],                       action => 'MissingRHS' },
+            { lhs => 'Rule',      rhs => [qw/::=/],                       action => 'MissingLHS' },
+            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs/],               action => 'Rule' },
+            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => ActionName/], action => 'RuleWithAction' },
+            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => Name/],       action => 'RuleWithAction' },
+            { lhs => 'Lhs',       rhs => [qw/Name/],                      action => 'Lhs' },
+            { lhs => 'Rhs',       rhs => [qw/Names/],                     action => 'Rhs' },
             { lhs => 'Rhs',       rhs => [qw/Name +/],              action => 'Plus' },
             { lhs => 'Rhs',       rhs => [qw/Name */],              action => 'Star' },
             { lhs => 'Rhs',       rhs => [qw/Null/],                action => 'Null' },
-            { lhs => 'Names',     rhs => [qw/Name/],                min => 1 },
+            { lhs => 'Names',     rhs => [qw/Name/],                action => 'Names', min => 1 },
         ],
 
     });
@@ -56,6 +57,9 @@ sub parse_rules {
 
         if (m/^::=$/) {
             $rec->read('::=');
+        }
+        if (m/^(::(whatever|undef))$/) {
+            $rec->read('ActionName', $1);
         }
         elsif (m/^Null$/) {
             $rec->read('Null');
