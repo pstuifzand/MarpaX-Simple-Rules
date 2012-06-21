@@ -11,7 +11,6 @@ Factor     ::= 0      Star Factor    => Mul
 Factor     ::= 0000   Star Factor    => Mul
 Factor     ::= 0000   block_1 Factor => Mul
 Factor     ::= 0000   block_1 Factor => valid_perl_name
-line       ::= ::whatever ::undef
 RULES
 
 is_deeply($rules, [
@@ -24,7 +23,6 @@ is_deeply($rules, [
     { lhs => 'Factor',     rhs => [ qw/0000 Star Factor/ ], action => 'Mul' },
     { lhs => 'Factor',     rhs => [ qw/0000 block_1 Factor/ ], action => 'Mul' },
     { lhs => 'Factor',     rhs => [ qw/0000 block_1 Factor/ ], action => 'valid_perl_name' },
-    { lhs => 'line',       rhs => [ qw/::whatever ::undef/] },
 ]);
 
 done_testing();
