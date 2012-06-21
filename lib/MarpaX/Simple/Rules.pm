@@ -29,14 +29,14 @@ sub parse_rules {
         rules => [
             { lhs => 'Rules',     rhs => [qw/Rule/],                      action => 'Rules', min => 1 },
             { lhs => 'Rule',      rhs => [qw/Lhs/],                       action => 'MissingRHS' },
-            { lhs => 'Rule',      rhs => [qw/::=/],                       action => 'MissingLHS' },
-            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs/],               action => 'Rule' },
-            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => ActionName/], action => 'RuleWithAction' },
-            { lhs => 'Rule',      rhs => [qw/Lhs ::= Rhs => Name/],       action => 'RuleWithAction' },
+            { lhs => 'Rule',      rhs => [qw/DeclareOp/],                       action => 'MissingLHS' },
+            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs/],               action => 'Rule' },
+            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs ActionArrow ActionName/], action => 'RuleWithAction' },
+            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs ActionArrow Name/],       action => 'RuleWithAction' },
             { lhs => 'Lhs',       rhs => [qw/Name/],                      action => 'Lhs' },
             { lhs => 'Rhs',       rhs => [qw/Names/],                     action => 'Rhs' },
-            { lhs => 'Rhs',       rhs => [qw/Name +/],              action => 'Plus' },
-            { lhs => 'Rhs',       rhs => [qw/Name */],              action => 'Star' },
+            { lhs => 'Rhs',       rhs => [qw/Name Plus/],              action => 'Plus' },
+            { lhs => 'Rhs',       rhs => [qw/Name Star/],              action => 'Star' },
             { lhs => 'Rhs',       rhs => [qw/Null/],                action => 'Null' },
             { lhs => 'Names',     rhs => [qw/Name/],                action => 'Names', min => 1 },
         ],
@@ -52,33 +52,28 @@ sub parse_rules {
         return [];
     }
 
-    for (@tokens) {
-        next if m/^\s*$/;
+    my @terminals = (
+        [ 'DeclareOp', '::=' ],
+        [ 'ActionName', qr/(::(whatever|undef))/ ],
+        [ 'Null', 'Null' ],
+        [ 'ActionArrow', '=>' ],
+        [ 'Plus', '\+' ],
+        [ 'Star', '\*' ],
+        [ 'Name', qr/\w+/, ],
+    );
 
-        if (m/^::=$/) {
-            $rec->read('::=');
-        }
-        if (m/^(::(whatever|undef))$/) {
-            $rec->read('ActionName', $1);
-        }
-        elsif (m/^Null$/) {
-            $rec->read('Null');
-        }
-        elsif (m/^=>$/) {
-            $rec->read('=>');
-        }
-        elsif (m/^[+]$/) {
-            $rec->read('+');
-        }
-        elsif (m/^[*]$/) {
-            $rec->read('*');
-        }
-        elsif (m/^(\w+)$/) {
-            $rec->read('Name', $1);
-        }
-        elsif (m/^(\w+)([+*]?)$/) {
-            $rec->read('Name', $1);
-            $rec->read($2, $2);
+    TOKEN: for my $token (@tokens) {
+        next if $token =~ m/^\s*$/;
+
+        for my $t (@terminals) {
+            if ($token =~ m/^($t->[1])/) {
+                $rec->read($t->[0], $2 // $1);
+                $token =~ s/$t->[1]//;
+                if ($token) {
+                    redo TOKEN;
+                }
+                next TOKEN;
+            }
         }
     }
 

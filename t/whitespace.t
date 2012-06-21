@@ -58,13 +58,10 @@ RULES
 
 # No whitespace around operator
 {
-    eval {
-        parse_rules(<<"RULES");
+    my $rules = parse_rules(<<"RULES");
 a::=b
 RULES
-    };
-    unlike($@, qr/Can't use an undefined value as a SCALAR reference/);
-    like($@, qr/Can't parse/);
+    is_deeply($rules, [ { lhs => 'a', rhs => [qw/b/] } ]);
 }
 done_testing();
 
