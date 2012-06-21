@@ -1,5 +1,3 @@
-use lib 'lib';
-
 use Test::More;
 use MarpaX::Simple::Rules 'parse_rules';
 
