@@ -4,6 +4,5 @@ lib/MarpaX/Simple/Rules.pm
 t/basics.t
 t/plus.t
 t/identifiers.t
-README.md
 META.yml
 META.json
