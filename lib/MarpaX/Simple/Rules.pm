@@ -12,6 +12,7 @@ sub MissingRHS {my $m=shift;push @{$m->{error}}, 'Missing "::=" operator'; }
 sub MissingLHS {my $m=shift;push @{$m->{error}}, 'Missing name left of "::=" operator'; }
 sub Rules { my $m = shift; return { m => $m, rules => \@_ }; } 
 sub Rule { shift; return { @{$_[0]}, @{$_[2]}, @{$_[3]||[]} }; }
+sub Rule2 { shift; return { @{$_[0]}, rhs => [], @{$_[2]||[]} }; }
 sub Lhs { shift; return [lhs => $_[0]];}
 sub Rhs { shift; return [rhs => $_[0]];}
 sub Star { shift; return [rhs => [ $_[0] ], min => 0]; }
@@ -34,6 +35,7 @@ sub parse_rules {
             { lhs => 'Rule',      rhs => [qw/Lhs/],                                      action => 'MissingRHS' },
             { lhs => 'Rule',      rhs => [qw/DeclareOp/],                                action => 'MissingLHS' },
             { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Rhs Action/],                 action => 'Rule' },
+            { lhs => 'Rule',      rhs => [qw/Lhs DeclareOp Action/],                     action => 'Rule2' },
 
             { lhs => 'Action',    rhs => [],                                             action => 'Action' },
             { lhs => 'Action',    rhs => [qw/ActionArrow ActionName/],                   action => 'Action' },
