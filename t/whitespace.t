@@ -1,6 +1,7 @@
 
 use Test::More;
 
+use Data::Dumper;
 use MarpaX::Simple::Rules 'parse_rules';
 
 {
@@ -28,12 +29,15 @@ RULES
 
 {
     eval {
-        parse_rules(<<"RULES");
+        my $rules = parse_rules(<<"RULES");
 abc
 RULES
+        print Dumper($rules);
     };
     unlike($@, qr/Can't use an undefined value as a SCALAR reference/);
-    like($@, qr/Missing "::=" operator/);
+    #like($@, qr/Missing "::=" operator/);
+    #like($@, qr/Error: Parse exhausted, DeclareOp expected at line 1/);
+    like($@, qr/Input incomplete DeclareOp expected at line 1/);
 }
 
 {
@@ -43,7 +47,8 @@ RULES
 RULES
     };
     unlike($@, qr/Can't use an undefined value as a SCALAR reference/);
-    like($@, qr/Missing name left of "::=" operator/);
+    #like($@, qr/Missing name left of "::=" operator/);
+    like($@, qr/Error: Parse exhausted, Name expected before '::=' at line 1/);
 }
 
 {
@@ -53,15 +58,17 @@ RULES
 RULES
     };
     unlike($@, qr/Can't use an undefined value as a SCALAR reference/);
-    like($@, qr/Missing name left of "::=" operator/);
+    #like($@, qr/Missing name left of "::=" operator/);
+    like($@, qr/Error: Parse exhausted, Name expected before '::=' at line 1/);
 }
 
 # No whitespace around operator
 {
     my $rules = parse_rules(<<"RULES");
-a::=b
+a::=b 
 RULES
     is_deeply($rules, [ { lhs => 'a', rhs => [qw/b/] } ]);
 }
+
 done_testing();
 
