@@ -1,7 +1,7 @@
 package MarpaX::Simple::Rules;
 use strict;
 
-our $VERSION='0.2.6';
+our $VERSION='0.2.7';
 
 use Marpa::XS;
 use Data::Dumper;
@@ -138,6 +138,16 @@ __END__
 
 MarpaX::Simple::Rules - Simple definition language for rules
 
+=head1 WARNING
+
+MarpaX::Simple::Rules depends on a deprecated module called Marpa::XS. That
+module will be (or is already) removed from CPAN.
+
+MarpaX::Simple::Rules served as an inspiration to a new interface called
+L<Marpa::R2::Scanless> (SLIF), which features similar syntax and more features.
+Where MarpaX::Simple::Rules only parsed BNF rules, SLIF will also tokenize your
+input. SLIF is the way forward for all new projects.
+
 =head1 SYNOPSYS
 
     use Marpa::XS;
@@ -234,7 +244,7 @@ Peter Stuifzand E<lt>peter@stuifzand.euE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2012 Peter Stuifzand.  All rights reserved.
+Copyright (c) 2012-2014 Peter Stuifzand.  All rights reserved.
 
 =cut
 

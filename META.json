@@ -4,7 +4,7 @@
       "Peter Stuifzand E<lt>peter@stuifzand.euE<gt>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.120630",
+   "generated_by" : "Module::Build version 0.4007, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -28,7 +28,7 @@
    "provides" : {
       "MarpaX::Simple::Rules" : {
          "file" : "lib/MarpaX/Simple/Rules.pm",
-         "version" : "v0.2.6"
+         "version" : "v0.2.7"
       }
    },
    "release_status" : "stable",
@@ -37,5 +37,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "v0.2.6"
+   "version" : "v0.2.7"
 }
